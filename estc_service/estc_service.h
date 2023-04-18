@@ -42,7 +42,7 @@
 
 // TODO: 2. Pick a random service 16-bit UUID and define it:
 // #define ESTC_SERVICE_UUID 0xabcd
-#define ESTC_SERVICE_UUID 0x6720
+#define ESTC_SERVICE_UUID 0x2067
 
 typedef struct
 {

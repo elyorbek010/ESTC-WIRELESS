@@ -37,28 +37,28 @@
 #include "ble_gatts.h"
 #include "ble_srv_common.h"
 
-const ble_uuid128_t p_vs_uuid = {
-    .uuid128 = ESTC_BASE_UUID};
-
-uint8_t p_vs_uuid_type = 0;
-
 ret_code_t estc_ble_service_init(ble_estc_service_t *service)
 {
     ret_code_t error_code = NRF_SUCCESS;
+
+    uint8_t p_uuid_type = 0;
+
+    const ble_uuid128_t p_vs_uuid = {
+    .uuid128 = ESTC_BASE_UUID};
 
     const ble_uuid_t service_uuid = {
         .uuid = ESTC_SERVICE_UUID,
         .type = BLE_UUID_TYPE_VENDOR_BEGIN};
 
     // TODO: 3. Add service UUIDs to the BLE stack table using `sd_ble_uuid_vs_add`
-    sd_ble_uuid_vs_add(&p_vs_uuid, &p_vs_uuid_type);
+    sd_ble_uuid_vs_add(&p_vs_uuid, &p_uuid_type);
 
     // TODO: 4. Add service to the BLE stack using `sd_ble_gatts_service_add`
     sd_ble_gatts_service_add(BLE_GATTS_SRVC_TYPE_PRIMARY, &service_uuid, &service->service_handle);
-
-    // NRF_LOG_DEBUG("%s:%d | Service UUID: 0x%04x", __FUNCTION__, __LINE__, service_uuid.uuid);
-    // NRF_LOG_DEBUG("%s:%d | Service UUID type: 0x%02x", __FUNCTION__, __LINE__, service_uuid.type);
-    // NRF_LOG_DEBUG("%s:%d | Service handle: 0x%04x", __FUNCTION__, __LINE__, service->service_handle);
+    
+    NRF_LOG_DEBUG("%s:%d | Service UUID: 0x%04x", __FUNCTION__, __LINE__, service_uuid.uuid);
+    NRF_LOG_DEBUG("%s:%d | Service UUID type: 0x%02x", __FUNCTION__, __LINE__, service_uuid.type);
+    NRF_LOG_DEBUG("%s:%d | Service handle: 0x%04x", __FUNCTION__, __LINE__, service->service_handle);
 
     return error_code;
 }
