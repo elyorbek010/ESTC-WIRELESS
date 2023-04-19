@@ -48,6 +48,10 @@
 // #define ESTC_GATT_CHAR_1_UUID 0x0001
 #define ESTC_GATT_CHAR_1_UUID 0x2068
 
+// Add two more characteristics
+#define ESTC_GATT_CHAR_2_UUID 0x2069
+#define ESTC_GATT_CHAR_3_UUID 0x2070
+
 typedef struct
 {
     uint16_t service_handle;
