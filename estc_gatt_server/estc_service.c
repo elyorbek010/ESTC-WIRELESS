@@ -132,19 +132,60 @@ static ret_code_t estc_ble_add_characteristics(ble_estc_service_t *service)
         .p_attr_md = &attr_3_md};
 
     // TODO: 6.7. Set characteristic length in number of bytes in attr_char_value structure
-    attr_char_1_value.init_len = sizeof(uint8_t);
-    attr_char_1_value.max_len = sizeof(uint8_t);
+    attr_char_1_value.init_len = sizeof(uint32_t);
+    attr_char_1_value.max_len = sizeof(uint32_t);
 
-    attr_char_2_value.init_len = sizeof(uint8_t);
-    attr_char_2_value.max_len = sizeof(uint8_t);
+    attr_char_2_value.init_len = sizeof(uint32_t);
+    attr_char_2_value.max_len = sizeof(uint32_t);
 
-    attr_char_3_value.init_len = sizeof(uint8_t);
-    attr_char_3_value.max_len = sizeof(uint8_t);
-
+    attr_char_3_value.init_len = sizeof(uint32_t);
+    attr_char_3_value.max_len = sizeof(uint32_t);
+    
     // TODO: 6.4. Add new characteristic to the service using `sd_ble_gatts_characteristic_add`
-    sd_ble_gatts_characteristic_add(service->service_handle, &char_1_md, &attr_char_1_value, &(service->char_handle));
-    sd_ble_gatts_characteristic_add(service->service_handle, &char_2_md, &attr_char_2_value, &(service->char_handle));
-    sd_ble_gatts_characteristic_add(service->service_handle, &char_3_md, &attr_char_3_value, &(service->char_handle));
+    sd_ble_gatts_characteristic_add(service->service_handle, &char_1_md, &attr_char_1_value, &(service->char_1_handle));
+    sd_ble_gatts_characteristic_add(service->service_handle, &char_2_md, &attr_char_2_value, &(service->char_2_handle));
+    sd_ble_gatts_characteristic_add(service->service_handle, &char_3_md, &attr_char_3_value, &(service->char_3_handle));
 
     return error_code;
+}
+
+
+void estc_update_characteristic_1_value(ble_estc_service_t *service, int32_t *value)
+{
+    ble_gatts_value_t value_gatts = {
+        .len = sizeof(*value),
+        .offset = 0,
+        .p_value = (uint8_t*)value
+    };
+    sd_ble_gatts_value_set(service->connection_handle, service->char_1_handle.value_handle, &value_gatts);
+}
+
+void estc_update_characteristic_2_value(ble_estc_service_t *service, int32_t *value)
+{
+    uint16_t len = sizeof(int32_t);
+    ble_gatts_hvx_params_t hvx_params;
+    memset(&hvx_params, 0, sizeof(hvx_params));
+
+    hvx_params.handle = service->char_2_handle.value_handle;
+    hvx_params.type = BLE_GATT_HVX_NOTIFICATION;
+    hvx_params.offset = 0;
+    hvx_params.p_len = &len;
+    hvx_params.p_data = (uint8_t *)value;
+
+    sd_ble_gatts_hvx(service->connection_handle, &hvx_params);
+}
+
+void estc_update_characteristic_3_value(ble_estc_service_t *service, int32_t *value)
+{
+    uint16_t len = sizeof(int32_t);
+    ble_gatts_hvx_params_t hvx_params;
+    memset(&hvx_params, 0, sizeof(hvx_params));
+
+    hvx_params.handle = service->char_3_handle.value_handle;
+    hvx_params.type = BLE_GATT_HVX_INDICATION;
+    hvx_params.offset = 0;
+    hvx_params.p_len = &len;
+    hvx_params.p_data = (uint8_t *)value;
+
+    sd_ble_gatts_hvx(service->connection_handle, &hvx_params);
 }
